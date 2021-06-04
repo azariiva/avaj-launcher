@@ -11,12 +11,13 @@ public interface Flyable
 
     /**
      * Logs current conditions and updates them according to subject
-     * @throws UnknownWeatherTowerException when class hasn't registered {@link WeatherTower}
+     * @throws UnknownWeatherTowerException when {@link WeatherTower} was not registered
      */
     void updateConditions() throws UnknownWeatherTowerException;
 
     /**
      * Registers weatherTower by assigning it to class attribute
+     * @throws UnknownWeatherTowerException when {@link WeatherTower} already has been registered
      */
-    void registerTower(WeatherTower weatherTower);
+    void registerTower(WeatherTower weatherTower) throws UnknownWeatherTowerException;
 }

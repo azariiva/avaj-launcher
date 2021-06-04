@@ -1,9 +1,11 @@
 package fr._42.blinnea.avaj_launcher.exceptions;
 
-import fr._42.blinnea.avaj_launcher.Aircraft;
-
 public class UnknownWeatherTowerException extends IllegalStateException {
-    public UnknownWeatherTowerException(Aircraft aircraft) {
-        super(aircraft.toString());
+    public UnknownWeatherTowerException() {
+        super();
+    }
+
+    public UnknownWeatherTowerException(String aClass, String method, String description) {
+        super(String.format("%s::%s: %s", aClass, method, description));
     }
 }

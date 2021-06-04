@@ -22,7 +22,7 @@ public class Coordinates {
         this.latitude = latitude;
         this.height = height;
         if (longitude <= 0 || latitude <= 0 || height < 0 || height > 100)
-            throw new IllegalCoordinatesException(this);
+            throw new IllegalCoordinatesException(this.getClass().toString(), "<init>", "coordinates out of bounds");
     }
 
     @Getter

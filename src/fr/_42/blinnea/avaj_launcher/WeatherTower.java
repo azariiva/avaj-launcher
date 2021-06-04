@@ -1,10 +1,6 @@
 package fr._42.blinnea.avaj_launcher;
 
 public class WeatherTower extends Tower {
-    WeatherTower() {
-        super();
-    }
-
     /**
      * @return weather from {@link WeatherProvider}
      */

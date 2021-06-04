@@ -40,7 +40,9 @@ public class Baloon extends Aircraft implements Flyable, Loggable {
 
     @Override
     public void updateConditions() throws UnknownWeatherTowerException {
-        if (weatherTower == null) throw new UnknownWeatherTowerException(this);
+        if (weatherTower == null)
+            throw new UnknownWeatherTowerException(this.getClass().toString(),
+                    "updateConditions", "could not update conditions if weatherTower had not been registered");
         String weather = weatherTower.getWeather(coordinates);
         logger.info(String.format("%s: %s", toString(), weather));
         updateCoordinates(weather);
@@ -51,12 +53,11 @@ public class Baloon extends Aircraft implements Flyable, Loggable {
     }
 
     @Override
-    public void registerTower(WeatherTower weatherTower) {
+    public void registerTower(WeatherTower weatherTower) throws UnknownWeatherTowerException {
         logger.entering("Baloon", "registerTower");
-        if (this.weatherTower != null) {
-            logger.warning("weatherTower was already registered");
-            weatherTower.unregister(this);
-        }
+        if (this.weatherTower != null)
+            throw new UnknownWeatherTowerException(this.getClass().toString(),
+                    "registerTower", "could not re-register weatherTower");
         this.weatherTower = weatherTower;
         logger.finest(String.format("WeatherTower@%x registered", weatherTower.hashCode()));
         logger.exiting("Baloon", "registerTower");

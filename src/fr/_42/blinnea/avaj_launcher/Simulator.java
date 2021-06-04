@@ -1,5 +1,8 @@
 package fr._42.blinnea.avaj_launcher;
 
+import fr._42.blinnea.avaj_launcher.exceptions.AvajIllegalArgumentException;
+import fr._42.blinnea.avaj_launcher.exceptions.UnknownWeatherTowerException;
+
 import java.io.*;
 import java.util.*;
 import java.util.logging.*;
@@ -29,7 +32,7 @@ public class Simulator implements Loggable {
         try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(args[0])))) {
             int weatherChange = scanner.nextInt();
             WeatherTower weatherTower = new WeatherTower();
-            ArrayList<Flyable> vehicles = new ArrayList<>();
+            List<Flyable> vehicles = new LinkedList<>();
             while (scanner.hasNext()) {
                 String type = scanner.next("[\\w]+");
                 String name = scanner.next("[\\w]+");
@@ -38,16 +41,16 @@ public class Simulator implements Loggable {
                 int height = scanner.nextInt();
                 vehicles.add(AircraftFactory.newAircraft(type, name, longitude, latitude, height));
             }
-            for (Flyable vehicle : vehicles)
-                weatherTower.register(vehicle);
-            for (int i = 0; i < weatherChange; i++)
-                weatherTower.changeWeather();
+            for (Flyable vehicle : vehicles) weatherTower.register(vehicle);
+            for (int i = 0; i < weatherChange; i++) weatherTower.changeWeather();
         } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.printf("Provide filename as command line argument: %s\n", e.toString());
+            System.out.printf("Provide filename as a command line argument: %s\n", e.toString());
         } catch (FileNotFoundException e) {
             System.out.printf("Wrong filename %s provided: %s\n", args[0], e.toString());
         } catch (NoSuchElementException e) {
-            System.out.println("Wrong file format");
+            System.out.printf("Illegal file format: %s\n", e.toString());
+        } catch (AvajIllegalArgumentException | UnknownWeatherTowerException e) {
+            System.out.println(e.toString());
         }
 
 //        Locale locale = new Locale("ru","RU");

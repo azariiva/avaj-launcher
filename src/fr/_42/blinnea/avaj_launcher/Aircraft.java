@@ -3,6 +3,7 @@ package fr._42.blinnea.avaj_launcher;
 import fr._42.blinnea.avaj_launcher.exceptions.IllegalAircraftException;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Represents an aircraft with name, id and coordinates
@@ -11,7 +12,7 @@ public class Aircraft {
     protected final long id;
     protected final String name;
     protected Coordinates coordinates;
-    private static long idCounter = 0;
+    private static int idCounter = 0;
 
     /**
      * Creates aircraft with given name and coordinates assign unique id using {@link Aircraft#nextId()}
@@ -24,7 +25,8 @@ public class Aircraft {
         this.name = name;
         this.coordinates = coordinates;
         if (name == null || coordinates == null)
-            throw new IllegalAircraftException(this);
+            throw new IllegalAircraftException(this.getClass().toString(), "<init>",
+                    "name or coordinates can not be null");
     }
 
     /**
@@ -34,6 +36,23 @@ public class Aircraft {
     private static long nextId() {
         idCounter += 1;
         return idCounter;
+    }
+
+    /**
+     * HashCode of the Aircraft represented by {@link Aircraft#id}
+     */
+    @Override
+    public int hashCode() {
+        return idCounter % Integer.MAX_VALUE;
+    }
+
+    @Override
+    public boolean equals(Object otherObject) {
+        if (this == otherObject) return true;
+        if (otherObject == null) return false;
+        if (getClass() != otherObject.getClass()) return false;
+        Aircraft other = (Aircraft) otherObject;
+        return id == other.id && Objects.equals(name, other.name) && Objects.equals(coordinates, other.coordinates);
     }
 
     public static void main(String[] args) {

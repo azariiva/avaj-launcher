@@ -2,7 +2,9 @@ package fr._42.blinnea.avaj_launcher;
 
 import fr._42.blinnea.avaj_launcher.exceptions.IllegalFlyableException;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.*;
 
 /**
@@ -10,21 +12,19 @@ import java.util.logging.*;
  * {@link Tower#conditionsChanged() updates conditions} when necessary
  */
 public class Tower implements Loggable {
-    private final ArrayList<Flyable> observers;
-
-    Tower() {
-        observers = new ArrayList<>();
-    }
+    // ConcurrentHashMap, т.к. иначе невозможно изменить Set с ошибкой ConcurrentModificationException
+    private final Set<Flyable> observers = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     /**
      * Registers flyable
      * @param flyable any {@link Flyable flyable} object
-     * @throws IllegalFlyableException if flyable is null
+     * @throws IllegalFlyableException if flyable is null or if flyable is already registered
      */
     public void register(Flyable flyable) throws IllegalFlyableException {
         logger.entering("Tower", "register");
-        if (flyable == null) throw new IllegalFlyableException(this);
-        observers.add(flyable);
+        if (flyable == null) throw new IllegalFlyableException(this.getClass().toString(), "register", "null argument");
+        if (!observers.add(flyable)) throw new IllegalFlyableException(this.getClass().toString(), "register",
+                String.format("%s is already registered", flyable.toString()));
         logger.info(String.format("Tower says: %s registered to weather tower.", flyable.toString()));
         logger.exiting("Tower", "register");
     }
@@ -36,7 +36,8 @@ public class Tower implements Loggable {
      */
     public void unregister(Flyable flyable) throws IllegalFlyableException {
         logger.entering("Tower", "unregister");
-        if (flyable == null) throw new IllegalFlyableException(this);
+        if (flyable == null) throw new IllegalFlyableException(this.getClass().toString(), "unregister",
+                "null argument");
         observers.remove(flyable);
         logger.info(String.format("Tower says: %s unregistered from weather tower.", flyable.toString()));
         logger.exiting("Tower", "unregister");
@@ -46,8 +47,8 @@ public class Tower implements Loggable {
      * Calls {@link Flyable#updateConditions()} on every registered entity
      */
     protected void conditionsChanged() {
-        for (int i = 0; i < observers.size(); i++)
-            observers.get(i).updateConditions();
+        for (Flyable observer : observers)
+            observer.updateConditions();
         logger.finest("conditionsChanged");
     }
 
@@ -55,7 +56,8 @@ public class Tower implements Loggable {
         if (System.getProperty("java.util.logging.config.class") == null
                 && System.getProperty("java.util.logging.config.file") == null)
         {
-            logger.setLevel(Level.ALL);
+            logger.setUseParentHandlers(false);
+            logger.setLevel(Level.INFO);
             Handler handler = new Handler(){
                 @Override
                 public void publish(LogRecord record)
@@ -105,6 +107,13 @@ public class Tower implements Loggable {
         Tower tower = new Tower();
         for (int i = 0; i < flyables.length; i++)
             flyables[i].registerTower(tower);
+        try {
+            flyables[0].registerTower(tower);
+        } catch (IllegalFlyableException e) {
+            System.out.println(e.toString());
+        }
         tower.conditionsChanged();
+        for (int i = 0; i < flyables.length; i++)
+            flyables[i].registerTower(tower);
     }
 }

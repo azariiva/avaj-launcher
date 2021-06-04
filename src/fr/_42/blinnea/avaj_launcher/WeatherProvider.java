@@ -31,7 +31,8 @@ public class WeatherProvider {
      */
     public String getCurrentWeather(Coordinates coordinates) throws IllegalCoordinatesException {
         logger.entering("WeatherProvider", "getCurrentWeather");
-        if (coordinates == null) throw new IllegalCoordinatesException(this);
+        if (coordinates == null) throw new IllegalCoordinatesException(this.getClass().toString(), "getCurrentWeather",
+                "null pointer passed to method");
         String weather = WeatherProvider.weather[coordinatesToIndex(coordinates)];
         logger.exiting("WeatherProvider", "getCurrentWeather");
         return weather;
