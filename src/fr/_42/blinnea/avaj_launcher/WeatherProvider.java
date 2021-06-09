@@ -1,7 +1,6 @@
 package fr._42.blinnea.avaj_launcher;
 
 import fr._42.blinnea.avaj_launcher.exceptions.IllegalCoordinatesException;
-import jdk.nashorn.internal.objects.annotations.Getter;
 
 import java.util.logging.Logger;
 
@@ -15,7 +14,6 @@ public class WeatherProvider {
 
     private WeatherProvider() {}
 
-    @Getter
     public static WeatherProvider getProvider() {
         if (weatherProvider == null) weatherProvider = new WeatherProvider();
         return weatherProvider;

@@ -13,7 +13,7 @@ import java.util.logging.*;
  */
 public class Tower implements Loggable {
     // ConcurrentHashMap, т.к. иначе невозможно изменить Set с ошибкой ConcurrentModificationException
-    private final Set<Flyable> observers = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private final Set<Flyable> observers = Collections.newSetFromMap(new ConcurrentHashMap<Flyable,Boolean>());
 
     /**
      * Registers flyable

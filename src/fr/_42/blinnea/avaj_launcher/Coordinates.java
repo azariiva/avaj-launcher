@@ -1,15 +1,16 @@
 package fr._42.blinnea.avaj_launcher;
 
 import fr._42.blinnea.avaj_launcher.exceptions.IllegalCoordinatesException;
-import jdk.nashorn.internal.objects.annotations.Getter;
+
+import java.util.Objects;
 
 /**
  * Represents three dimensional point
  */
 public class Coordinates {
-    private final int longitude;
-    private final int latitude;
-    private final int height;
+    private final Integer longitude;
+    private final Integer latitude;
+    private final Integer height;
 
     /**
      * @param longitude any positive integer
@@ -25,17 +26,14 @@ public class Coordinates {
             throw new IllegalCoordinatesException(this.getClass().toString(), "<init>", "coordinates out of bounds");
     }
 
-    @Getter
     int getLongitude() {
         return longitude;
     }
 
-    @Getter
     int getLatitude() {
         return latitude;
     }
 
-    @Getter
     int getHeight() {
         return height;
     }
@@ -46,12 +44,13 @@ public class Coordinates {
         if (otherObject == null) return false;
         if (getClass() != otherObject.getClass()) return false;
         Coordinates other = (Coordinates) otherObject;
-        return longitude == other.longitude && latitude == other.latitude && height == other.height;
+        return Objects.equals(longitude, other.longitude) && Objects.equals(latitude, other.latitude) &&
+                Objects.equals(height, other.height);
     }
 
     @Override
     public int hashCode() {
-        return 7 * Integer.hashCode(longitude) + 11 * Integer.hashCode(latitude) + 13 * Integer.hashCode(height);
+        return Objects.hash(longitude, latitude, height);
     }
 
     @Override
